@@ -9,6 +9,25 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
+var binarySearch = function(array, key) {
+  var lo = 0;
+  var hi = array.length - 1;
+  var mid;
+  var element;
+  while (lo <= hi) {
+    mid = ((lo + hi) >> 1);
+    element = array[mid];
+    if (element < key) {
+      lo = mid + 1;
+    } else if (element > key) {
+      hi = mid - 1;
+    } else {
+      return mid;
+    }
+  }
+  return -1;
+};
+
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
@@ -26,12 +45,32 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  // console.log('path',exports.paths.list);
+  fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+    if (err) {
+      callback(err);
+    } 
+    // callback(err, data.split('\n'));
+    callback(data.split('\n'));
+  });
 };
 
 exports.isUrlInList = function(url, callback) {
+  fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+    if (err) {
+      callback(err);
+    } 
+    // callback(err, data.split('\n'));
+    data = data.split('\n');
+  
+    var index = binarySearch(data, url);
+
+    index === -1 ? callback(false) : callback(true);
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
+
 };
 
 exports.isUrlArchived = function(url, callback) {
@@ -39,3 +78,4 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
 };
+
