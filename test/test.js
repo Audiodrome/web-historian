@@ -79,7 +79,7 @@ describe('server', function() {
 describe('archive helpers', function() {
   describe('#readListOfUrls', function () {
     it('should read urls from sites.txt', function (done) {
-      var urlArray = ['example1.com', 'example2.com'];
+      var urlArray = ['example1.com', 'example2.com', 'someurl', 'google.com', 'cnn.com', 'porsche.com', 'prawnhub.com'];
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
       archive.readListOfUrls(function(urls) {
@@ -91,13 +91,13 @@ describe('archive helpers', function() {
 
   describe('#isUrlInList', function () {
     it('should check if a url is in the list', function (done) {
-      var urlArray = ['example1.com', 'example2.com'];
+      var urlArray = ['example1.com', 'example2.com', 'google.com', 'cnn.com', 'porsche.com', 'prawnhub.com'];
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
       var counter = 0;
       var total = 2;
 
-      archive.isUrlInList('example1.com', function (exists) {
+      archive.isUrlInList('porsche.com', function (exists) {
         expect(exists).to.be.true;
         if (++counter === total) { done(); }
       });

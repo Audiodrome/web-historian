@@ -36,6 +36,12 @@ exports.handleRequest = function (req, res) {
   //     console.log(data);
   //     // return ['example1.com', 'example2.com'];
   //   });
-  res.write(200, serve.headers);
+
+  // archive.isUrlArchivedAsync()
+  //   .then(function(data) {
+  //     console.log(data);
+  //     // return ['example1.com', 'example2.com'];
+  //   });
+
   res.end(archive.paths.siteAssets);
 };

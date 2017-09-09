@@ -62,20 +62,55 @@ exports.isUrlInList = function(url, callback) {
     } 
     // callback(err, data.split('\n'));
     data = data.split('\n');
-  
+    data = data.sort();
+    // console.log('sorted?', data);
     var index = binarySearch(data, url);
-
+    
+    // console.log('location index:', index);
     index === -1 ? callback(false) : callback(true);
   });
 };
 
 exports.addUrlToList = function(url, callback) {
-
+  // console.log('url to be added', url.toString());
+  fs.appendFile(exports.paths.list, url.toString(), (err) => {
+    if (err) {
+      callback(err);
+    }
+    callback(url);
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  // console.log('archived path', exports.paths.archivedSites);
+  fs.readdir(exports.paths.archivedSites, 'utf8', (err, data) => {
+    if (err) {
+      callback(err);
+    }
+    data.includes(url) ? callback(true) : callback(false);
+  });
 };
 
 exports.downloadUrls = function(urls) {
+  fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+    console.log('data', data);
+    if (err) {
+      console.log(err);
+    } 
+  
+    for (let i = 0; i < urls.length; i++) {
+      exports.isUrlArchived(urls[i], function(isArchived){
+        if (!isArchived) {
+          // console.log('google?', urls[i]);
+          fs.writeFile(exports.paths.archivedSites + '/' + urls[i], urls[i], 'utf8', function (err){
+            console.log('google?', urls[i]);
+            if (err) {
+              console.log('error', err);
+            }
+          });
+        }
+      });
+    }
+  });
 };
 
