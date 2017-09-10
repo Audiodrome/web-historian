@@ -6,16 +6,20 @@ var archive = Promise.promisifyAll(require('../helpers/archive-helpers'));
 var serve = Promise.promisifyAll(require('./http-helpers'));
 
 var actions = {
-  GET: function(request, response, statusCode) {
-    response.writeHead(statusCode, serve.headers);
-  },
+  GET: serve.serveAssetsAsync,
 };
 
 var sendResponse = function(request, response, statusCode) {
   var action = actions[request.method];
 
   if (action) {
-    action(request, response, statusCode);
+    action(response, archive.paths.siteAssets)
+      .then(function(data) {
+        console.log('htm: ', data);
+      })
+      .catch(function(error) {
+        console.log('did not do action');
+      });
   }
 };
 
@@ -42,6 +46,4 @@ exports.handleRequest = function (req, res) {
   //     console.log(data);
   //     // return ['example1.com', 'example2.com'];
   //   });
-
-  res.end(archive.paths.siteAssets);
 };

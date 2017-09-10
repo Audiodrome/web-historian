@@ -1,4 +1,5 @@
 var http = require('http');
+var url = require('url');
 var handler = require('./request-handler');
 var initialize = require('./initialize.js');
 
@@ -11,12 +12,14 @@ var ip = '127.0.0.1';
 
 var routes = {
   '/': handler,
-  '/archives': handler,
+  '/styles.css': handler,
 };
 //var server = http.createServer(handler.handleRequest);
 
 var server = http.createServer(function(req, res) {
   // console.log('hello');
+  
+  // var route = routes[url.parse(req.url).pathname];
   handler.handleRequest(req, res);
 });
 

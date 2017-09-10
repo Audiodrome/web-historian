@@ -43,14 +43,29 @@ exports.initialize = function(pathsObj) {
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
+exports.readPageFile = function(path, callback) {
+  fs.readFile(path, 'utf8', (err, data) => {
+    if (err) {
+      callback(err);
+    } 
+    callback(err, data);
+  });
+};
+
+exports.readPageDir = function(path, callback) {
+  fs.readdir(path, 'utf8', (err, data) => {
+    if (err) {
+      callback(err);
+    }
+    callback(err, data);
+  });
+};
 
 exports.readListOfUrls = function(callback) {
-  // console.log('path',exports.paths.list);
   fs.readFile(exports.paths.list, 'utf8', (err, data) => {
     if (err) {
       callback(err);
     } 
-    // callback(err, data.split('\n'));
     callback(data.split('\n'));
   });
 };
@@ -60,19 +75,15 @@ exports.isUrlInList = function(url, callback) {
     if (err) {
       callback(err);
     } 
-    // callback(err, data.split('\n'));
     data = data.split('\n');
     data = data.sort();
-    // console.log('sorted?', data);
     var index = binarySearch(data, url);
-    
-    // console.log('location index:', index);
+
     index === -1 ? callback(false) : callback(true);
   });
 };
 
 exports.addUrlToList = function(url, callback) {
-  // console.log('url to be added', url.toString());
   fs.appendFile(exports.paths.list, url.toString(), (err) => {
     if (err) {
       callback(err);
@@ -82,7 +93,6 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-  // console.log('archived path', exports.paths.archivedSites);
   fs.readdir(exports.paths.archivedSites, 'utf8', (err, data) => {
     if (err) {
       callback(err);
@@ -99,10 +109,10 @@ exports.downloadUrls = function(urls) {
     } 
   
     for (let i = 0; i < urls.length; i++) {
-      exports.isUrlArchived(urls[i], function(isArchived){
+      exports.isUrlArchived(urls[i], function(isArchived) {
         if (!isArchived) {
           // console.log('google?', urls[i]);
-          fs.writeFile(exports.paths.archivedSites + '/' + urls[i], urls[i], 'utf8', function (err){
+          fs.writeFile(exports.paths.archivedSites + '/' + urls[i], urls[i], 'utf8', function (err) {
             console.log('google?', urls[i]);
             if (err) {
               console.log('error', err);
